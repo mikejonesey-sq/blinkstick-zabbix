@@ -13,8 +13,8 @@ bookmark_name=env1-bookmark
 ##################################################
 # devices are used to define hosts
 
-zabbix-srv-01		ansible_host=zb-01.example.com	ansible_ssh_host=10.20.0.6		comment="Zabbix server comment..."
-blinkstick-host-01 	ansible_host=bs-01.example.com	ansible_ssh_host=10.10.0.145	comment="Raspberry Pi #1"
+zabbix-srv-01		ansible_host=zb-01.example.com ansible_ssh_host=192.168.0.2 comment="Zabbix server comment..."
+blinkstick-host-01 	ansible_host=bs-01.example.com ansible_ssh_host=192.168.0.3 comment="Raspberry Pi #1"
 
 ##################################################
 # MAPPINGS
