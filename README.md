@@ -1,4 +1,4 @@
-blinkstick
+Ansible: blinkstick-zabbix
 =========
 
 A Playbook to deploy BlinkStick zabbix integration (colour coded group overview).
