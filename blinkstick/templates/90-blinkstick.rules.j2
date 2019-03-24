@@ -1,0 +1,6 @@
+# symbolc enables easy mounting to a jail, if desired...
+{% if create_blinkstick_usergroup|bool == True %}
+SUBSYSTEM=="usb", ATTR{idVendor}=="20a0", ATTR{idProduct}=="41e5", MODE="0660", GROUP="blinkstick", SYMLINK+="blinkstick/blinkstick"
+{% else %}
+SUBSYSTEM=="usb", ATTR{idVendor}=="20a0", ATTR{idProduct}=="41e5", SYMLINK+="blinkstick/blinkstick"
+{% endif %}

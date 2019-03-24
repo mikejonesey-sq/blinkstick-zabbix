@@ -1,0 +1,18 @@
+---
+# tasks file for blinkstick
+
+#-------------------------------------------------
+# Install...
+#-------------------------------------------------
+
+- name: Install
+  include: "install.yml"
+  when: "action is not defined or action == 'install'"
+
+#-------------------------------------------------
+# ???
+#-------------------------------------------------
+
+- name: Zabbix Integration
+  include: "zabbix.yml"
+  when: "action is not defined or action == 'zabbix-script'"

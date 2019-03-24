@@ -1,0 +1,82 @@
+#!/bin/bash
+
+ZAB_URL="{{ zabbix_url }}"
+MAX_LED="8"
+ZABBIX_USERNAME="{{ zabbix_username }}"
+ZABBIX_PASSWORD="{{ zabbix_password }}"
+
+function zabbix_login(){
+	LOGIN_JSON='{"jsonrpc": "2.0","method": "user.login","params": {"user": "'$ZABBIX_USERNAME'","password": "'$ZABBIX_PASSWORD'"},"id": 1}'
+	AUTH_TOKEN=$(wget --no-check-certificate -o/dev/null -O- --header "Content-Type: application/json" --post-data "$LOGIN_JSON" "$ZAB_URL/api_jsonrpc.php" 2>/dev/null | sed 's/.*result":"//;s/".*//')
+	ZABBIX_AUTH="$AUTH_TOKEN"
+}
+
+function build_config_file(){
+	# Build a config file...
+	CHECK_JSON='{"jsonrpc": "2.0","method": "trigger.get","params": {"monitored": 1,"output": "extend","selectGroups": "1","expandDescription": "1","sortfield": "priority","sortorder": "DESC"},"auth": "'$ZABBIX_AUTH'","id": 1}'
+	wget --no-check-certificate -o/dev/null -Ohealth.out --header "Content-Type: application/json" --post-data "$CHECK_JSON" "$ZAB_URL/api_jsonrpc.php" 2>/dev/null
+
+	LED_LOOP=0
+	cat health.out | python -m json.tool  | grep "groupid" | sort -u | sed 's/[^0-9]//g' | while read agid; do 
+		echo "LED_${LED_LOOP}_GROUP_ID=$agid" >> $HOME/bin/led.config
+		((LED_LOOP++))
+		if [ "$LED_LOOP" -gt "$MAX_LED" ]; then
+			break
+		fi
+	done
+}
+
+function get_health(){
+	CHECK_JSON='{"jsonrpc": "2.0","method": "trigger.get","params": {"active": 1,"only_true": "1","monitored": 1,"output": "extend","selectGroups": "1","expandDescription": "1","sortfield": "priority","sortorder": "DESC"},"auth": "'$ZABBIX_AUTH'","id": 1}'
+	wget --no-check-certificate -o/dev/null -Ohealth.out --header "Content-Type: application/json" --post-data "$CHECK_JSON" "$ZAB_URL/api_jsonrpc.php" 2>/dev/null
+}
+
+function update_led(){
+	# loop the leds..
+	for ((LED_LOOP=0; LED_LOOP<$MAX_LED; LED_LOOP++)); do
+		LED_CONFIG=$(grep "LED_${LED_LOOP}_GROUP_ID" $HOME/bin/led.config | sed 's/.*=//')
+		if [ -n "$LED_CONFIG" ]; then
+			#echo "led $LED_LOOP = group: $LED_CONFIG"
+			MAX_SERV=$(cat health.out | python -m json.tool | grep "groupid\": \"$LED_CONFIG\"" -A4 | grep "priority" | sed 's/[^0-9]//g' | sort -n | head -1)
+			if [ -z "$MAX_SERV" ]; then
+				#echo "no alerts for group..."
+                /usr/local/bin/blinkstick --index=$LED_LOOP --brightness=5 --set-color=green
+			elif [ "$MAX_SERV" == "1" ]; then
+				#echo "DISASTER"
+				/usr/local/bin/blinkstick --index=$LED_LOOP --brightness=5 --set-color=red
+			elif [ "$MAX_SERV" == "2" ]; then
+				#echo "High"
+				/usr/local/bin/blinkstick --index=$LED_LOOP --brightness=5 --set-color=red
+			elif [ "$MAX_SERV" == "3" ]; then
+				#echo "Average"
+				/usr/local/bin/blinkstick --index=$LED_LOOP --brightness=5 --set-color='EE6404'
+			elif [ "$MAX_SERV" == "4" ]; then
+				#echo "Warning"
+				/usr/local/bin/blinkstick --index=$LED_LOOP --brightness=5 --set-color=yellow
+			elif [ "$MAX_SERV" == "5" ]; then
+				#echo "Info"
+				/usr/local/bin/blinkstick --index=$LED_LOOP --brightness=5 --set-color=blue
+			else
+				#echo "Not-classified"
+				/usr/local/bin/blinkstick --index=$LED_LOOP --brightness=5 --set-color=gray
+			fi
+		else
+			# LED not configured...
+			/usr/local/bin/blinkstick --index=$LED_LOOP --brightness=0 --set-color=black --blink
+		fi
+	done
+}
+
+##################################################
+# Running script...
+##################################################
+
+zabbix_login
+
+if [ ! -f "$HOME/bin/led.config" ]; then
+	build_config_file
+fi
+
+get_health
+
+update_led

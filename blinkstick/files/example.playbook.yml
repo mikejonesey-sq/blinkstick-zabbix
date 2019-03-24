@@ -1,0 +1,22 @@
+#-------------------------------------------------
+# BlinkStick Role
+#-------------------------------------------------
+
+- hosts: blinkstick
+  roles:
+
+    - role: blinkstick
+      vars:
+        action: install
+      tags: blinkstick-install
+
+    - role: blinkstick
+      vars:
+        action: zabbix-script
+      tags: blinkstick-zabbix
+
+  tags: blinkstick
+
+#-------------------------------------------------
+# End
+#-------------------------------------------------

@@ -1,0 +1,76 @@
+---
+# install tasks file for blinkstick
+
+#-------------------------------------------------
+# Test / Pre-Run...
+#-------------------------------------------------
+
+- name: Check role is compatible
+  fail:
+    msg: "This role is only for Debian and RedHat Family OS"
+  when: "ansible_os_family != 'Debian' and ansible_os_family != 'RedHat'"
+
+#-------------------------------------------------
+# Debian Install
+#-------------------------------------------------
+
+- name: Update repositories cache (deb)
+  become: yes
+  apt:
+    update_cache: yes
+  when: "ansible_os_family == 'Debian'"
+
+- name: Install blinkstick dependanies (deb)
+  become: yes
+  apt:
+    name: python-pip
+    state: present
+  when: "ansible_os_family == 'Debian'"
+
+#-------------------------------------------------
+# RedHat Install
+#-------------------------------------------------
+
+- name: Install blinkstick dependanies (rpm)
+  become: yes
+  yum:
+    name: python-pip
+    state: present
+    update_cache: yes
+  when: "ansible_os_family == 'RedHat'"
+
+#-------------------------------------------------
+# Install
+#-------------------------------------------------
+
+- name: Install blinkstick dependanies
+  become: yes
+  pip:
+    name: blinkstick
+    state: present
+
+#-------------------------------------------------
+# Configure / Setup
+#-------------------------------------------------
+
+- name: Setup blinkstick usergroup
+  become: yes
+  group:
+    name: blinkstick
+    state: present
+  when: "create_blinkstick_usergroup|bool == True"
+
+- name: Add current user to blinkstick group
+  become: yes
+  shell: >
+    usermod -a -G blinkstick {{ ansible_user_id }}
+  when: "create_blinkstick_usergroup|bool == True"
+
+- name: Setup nice udev rule for blinkstick
+  become: yes
+  template:
+    src: 90-blinkstick.rules.j2
+    dest: /etc/udev/rules.d/90-blinkstick.rules
+    owner: root
+    group: root
+    mode: 0644

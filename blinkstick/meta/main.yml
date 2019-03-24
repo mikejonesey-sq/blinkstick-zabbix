@@ -1,0 +1,35 @@
+galaxy_info:
+  author: Michael Jones
+  description: A fun role to integrate zabbix group health status with an led usb blinkstick
+  company: mikejonesey
+
+  license: GPLv2
+
+  min_ansible_version: 2.7
+
+  github_branch: master
+
+  platforms:
+  - name: Fedora
+    versions:
+    - all
+  - name: Amazon
+    versions:
+    - all
+  - name: Ubuntu
+    versions:
+    - all
+  - name: Debian
+    versions:
+    - all
+
+  galaxy_tags:
+    - blinkstick
+    - led
+    - usb
+    - zabbix
+
+dependencies:
+    - pip
+    - blinkstick
+    - python

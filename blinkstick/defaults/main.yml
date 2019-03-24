@@ -1,0 +1,7 @@
+---
+# defaults file for blinkstick
+
+create_blinkstick_usergroup: yes
+zabbix_url: "https://127.0.0.1/zabbix"
+zabbix_username: "Admin"
+zabbix_password: "zabbix"

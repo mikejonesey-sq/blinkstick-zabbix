@@ -1,0 +1,57 @@
+##################################################
+# local for bookmarks
+##################################################
+[local]
+localhost ansible_connection=local
+
+[local:vars]
+bookmark_name=env1-bookmark
+
+[env1]
+##################################################
+# DEVICES
+##################################################
+# devices are used to define hosts
+
+zabbix-srv-01		ansible_host=zb-01.example.com	ansible_ssh_host=10.20.0.6		comment="Zabbix server comment..."
+blinkstick-host-01 	ansible_host=bs-01.example.com	ansible_ssh_host=10.10.0.145	comment="Raspberry Pi #1"
+
+##################################################
+# MAPPINGS
+##################################################
+# Mappings are used by playbooks and templates for example the apache workers.properties or firewall config a sever can be in one or more mapping group or none at all
+
+[mj0-prod-monitor]
+zabbix-srv-01
+
+[mj0-prod-blinkstick]
+blinkstick-host-01
+
+###########################
+# GENERIC ENV MAPPING (editable one2one generic map of env-group >< generic-groups)
+###########################
+
+[prod-monitor:children]
+mj0-prod-monitor
+
+[prod-blinkstick:children]
+mj0-prod-blinkstick
+
+###########################
+# GENERIC MAPPING (never edit these...)
+###########################
+# These mappings are the top level building blocks for playbooks, they should never be commented out as they map to generic mappings above
+
+[monitor:children]
+prod-monitor
+
+[blinkstick:children]
+prod-blinkstick
+
+###########################
+# GENERIC Name for all env nodes
+###########################
+
+[whole_environment:children]
+monitor
+blinkstick

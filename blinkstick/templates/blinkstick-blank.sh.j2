@@ -1,0 +1,16 @@
+#!/bin/bash
+
+MAX_LED="8"
+
+function update_led(){
+	# loop the leds..
+	for ((LED_LOOP=0; LED_LOOP<$MAX_LED; LED_LOOP++)); do
+		blinkstick --index=$LED_LOOP --brightness=0 --set-color=black --blink
+	done
+}
+
+##################################################
+# Running script...
+##################################################
+
+update_led
