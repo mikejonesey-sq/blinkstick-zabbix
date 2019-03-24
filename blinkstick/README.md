@@ -1,38 +1,55 @@
-Role Name
+blinkstick
 =========
 
-A brief description of the role goes here.
+A Playbook to deploy BlinkStick zabbix integration.
 
 Requirements
 ------------
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+A BlinkStick: https://www.blinkstick.com/
 
 Role Variables
 --------------
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+Define if a blinkstick group is to be created (for running under non-root user):
+
+- create_blinkstick_usergroup: yes
+
+Define zabbix api login details (setup a readonly user with no access to frontend):
+
+- zabbix_url: "https://127.0.0.1/zabbix"
+- zabbix_username: "Admin"
+- zabbix_password: "zabbix"
 
 Dependencies
 ------------
 
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+no dependancies on other roles, but will source zabbix login from a "monitor" group, if you do have one...
 
 Example Playbook
 ----------------
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
+- hosts: blinkstick
+  roles:
 
-    - hosts: servers
-      roles:
-         - { role: username.rolename, x: 42 }
+    - role: blinkstick
+      vars:
+        action: install
+      tags: blinkstick-install
+
+    - role: blinkstick
+      vars:
+        action: zabbix-script
+      tags: blinkstick-zabbix
+
+  tags: blinkstick
 
 License
 -------
 
-BSD
+GPLv2
 
 Author Information
 ------------------
 
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
+Mikejonesey
