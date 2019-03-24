@@ -1,7 +1,9 @@
 blinkstick
 =========
 
-A Playbook to deploy BlinkStick zabbix integration.
+A Playbook to deploy BlinkStick zabbix integration (colour coded group overview).
+
+![blinkstick overview](https://raw.githubusercontent.com/mikejonesey/blinkstick-zabbix/master/files/blinkstick-zabbix.png)
 
 Requirements
 ------------
