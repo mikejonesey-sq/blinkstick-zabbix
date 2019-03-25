@@ -27,7 +27,7 @@ function build_config_file(){
 }
 
 function get_health(){
-	CHECK_JSON='{"jsonrpc": "2.0","method": "trigger.get","params": {"active": 1,"only_true": "1","monitored": 1,"output": "extend","selectGroups": "1","expandDescription": "1","sortfield": "priority","sortorder": "DESC"},"auth": "'$ZABBIX_AUTH'","id": 1}'
+	CHECK_JSON='{"jsonrpc": "2.0","method": "trigger.get","params": {"active": 1,"only_true": "1","skipDependent": "1","monitored": 1,"output": "extend","selectGroups": "1","expandDescription": "1","sortfield": "priority","sortorder": "DESC"},"auth": "'$ZABBIX_AUTH'","id": 1}'
 	wget --no-check-certificate -o/dev/null -Ohealth.out --header "Content-Type: application/json" --post-data "$CHECK_JSON" "$ZAB_URL/api_jsonrpc.php" 2>/dev/null
 }
 
