@@ -37,23 +37,23 @@ function update_led(){
 		LED_CONFIG=$(grep "LED_${LED_LOOP}_GROUP_ID" $HOME/bin/led.config | sed 's/.*=//')
 		if [ -n "$LED_CONFIG" ]; then
 			#echo "led $LED_LOOP = group: $LED_CONFIG"
-			MAX_SERV=$(cat health.out | python -m json.tool | grep "groupid\": \"$LED_CONFIG\"" -A4 | grep "priority" | sed 's/[^0-9]//g' | sort -n | head -1)
+			MAX_SERV=$(cat health.out | python -m json.tool | grep "groupid\": \"$LED_CONFIG\"" -A4 | grep "priority" | sed 's/[^0-9]//g' | sort -n | tail -1)
 			if [ -z "$MAX_SERV" ]; then
 				#echo "no alerts for group..."
                 /usr/local/bin/blinkstick --index=$LED_LOOP --brightness=5 --set-color=green
-			elif [ "$MAX_SERV" == "1" ]; then
+			elif [ "$MAX_SERV" == "5" ]; then
 				#echo "DISASTER"
 				/usr/local/bin/blinkstick --index=$LED_LOOP --brightness=5 --set-color=red
-			elif [ "$MAX_SERV" == "2" ]; then
+			elif [ "$MAX_SERV" == "4" ]; then
 				#echo "High"
 				/usr/local/bin/blinkstick --index=$LED_LOOP --brightness=5 --set-color=red
 			elif [ "$MAX_SERV" == "3" ]; then
 				#echo "Average"
 				/usr/local/bin/blinkstick --index=$LED_LOOP --brightness=5 --set-color='EE6404'
-			elif [ "$MAX_SERV" == "4" ]; then
+			elif [ "$MAX_SERV" == "2" ]; then
 				#echo "Warning"
 				/usr/local/bin/blinkstick --index=$LED_LOOP --brightness=5 --set-color=yellow
-			elif [ "$MAX_SERV" == "5" ]; then
+			elif [ "$MAX_SERV" == "1" ]; then
 				#echo "Info"
 				/usr/local/bin/blinkstick --index=$LED_LOOP --brightness=5 --set-color=blue
 			else
