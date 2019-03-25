@@ -29,7 +29,5 @@ galaxy_info:
     - usb
     - zabbix
 
-dependencies:
-    - pip
-    - blinkstick
-    - python
+dependencies: []
+
