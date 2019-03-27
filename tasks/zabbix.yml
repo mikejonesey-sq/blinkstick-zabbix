@@ -47,13 +47,19 @@
 - name: Install blinkstick-zabbix script
   template:
     src: blinkstick-poll-zabbix.sh.j2
-    dest: bin/blinkstick-poll-zabbix.sh
+    dest: "{{ ansible_user_dir }}/bin/blinkstick-poll-zabbix.sh"
     mode: 0755
 
 - name: Install blinkstick-blank script
   template:
     src: blinkstick-blank.sh.j2
-    dest: bin/blinkstick-blank.sh
+    dest: "{{ ansible_user_dir }}/bin/blinkstick-blank.sh"
+    mode: 0755
+
+- name: Install zabbix-trigger check script
+  template:
+    src: zab-check.sh.j2
+    dest: "{{ ansible_user_dir }}/bin/zab-check.sh"
     mode: 0755
 
 #-------------------------------------------------
